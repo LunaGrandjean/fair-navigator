@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SaveRouteImport } from './routes/save'
 import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const SaveRoute = SaveRouteImport.update({
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JourneyRoute = JourneyRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/save': typeof SaveRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/save': typeof SaveRoute
 }
@@ -60,21 +68,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
   '/save': typeof SaveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/journey' | '/quiz' | '/save'
+  fullPaths: '/' | '/dashboard' | '/journey' | '/onboarding' | '/quiz' | '/save'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/journey' | '/quiz' | '/save'
-  id: '__root__' | '/' | '/dashboard' | '/journey' | '/quiz' | '/save'
+  to: '/' | '/dashboard' | '/journey' | '/onboarding' | '/quiz' | '/save'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/journey'
+    | '/onboarding'
+    | '/quiz'
+    | '/save'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   JourneyRoute: typeof JourneyRoute
+  OnboardingRoute: typeof OnboardingRoute
   QuizRoute: typeof QuizRoute
   SaveRoute: typeof SaveRoute
 }
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/quiz'
       fullPath: '/quiz'
       preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journey': {
@@ -123,6 +147,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   JourneyRoute: JourneyRoute,
+  OnboardingRoute: OnboardingRoute,
   QuizRoute: QuizRoute,
   SaveRoute: SaveRoute,
 }
