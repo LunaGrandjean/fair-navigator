@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { useState } from "react";
-import { ArrowLeft, Mail, User, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Mail, User, ShieldCheck, CheckCircle2, Send } from "lucide-react";
+import { getProfile, saveProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/save")({
   head: () => ({
@@ -18,12 +19,53 @@ function Save() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [sent, setSent] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+
+  useEffect(() => {
+    const p = getProfile();
+    setIsUser(p.account === "user");
+    if (p.email) setEmail(p.email);
+  }, []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.includes("@")) return;
+    if (!isUser && !email.includes("@")) return;
+    if (email) saveProfile({ email });
     setSent(true);
   };
+
+  if (isUser && !sent) {
+    return (
+      <AppShell showNav={false}>
+        <div className="flex flex-col h-full px-6 pt-4 pb-8 animate-fade-in">
+          <button
+            onClick={() => navigate({ to: "/dashboard" })}
+            className="tap-feedback w-10 h-10 rounded-full bg-muted flex items-center justify-center"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 rounded-full bg-primary-soft flex items-center justify-center mb-5">
+              <Send className="w-9 h-9 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold leading-tight">Send my results to my email</h1>
+            <p className="mt-2 text-sm text-muted-foreground max-w-[280px]">
+              You're logged in. We'll deliver your personalized dashboard straight to your inbox.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              if (!email) saveProfile({ email: "you@school.fr" });
+              setSent(true);
+            }}
+            className="tap-feedback flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-soft"
+          >
+            <Send className="w-4 h-4" /> Send my dashboard
+          </button>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell showNav={false}>
