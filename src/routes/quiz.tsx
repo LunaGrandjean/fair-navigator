@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useState } from "react";
 import { ArrowLeft, Check } from "lucide-react";
+import { patchJourney } from "@/lib/profile";
 
 export const Route = createFileRoute("/quiz")({
   head: () => ({
@@ -61,7 +62,13 @@ function Quiz() {
       setAnswers(next);
       setSelected(null);
       if (step + 1 < total) setStep(step + 1);
-      else navigate({ to: "/dashboard" });
+      else {
+        patchJourney({
+          quizCompletedAt: new Date().toISOString(),
+          quizAnswers: next,
+        });
+        navigate({ to: "/dashboard" });
+      }
     }, 350);
   };
 

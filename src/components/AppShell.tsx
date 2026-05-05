@@ -1,12 +1,103 @@
-import { ReactNode } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { ReactNode, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { PhoneFrame } from "./PhoneFrame";
 import { Home, Compass, BarChart3, QrCode } from "lucide-react";
+import { getSession, logout, type SessionState } from "@/lib/session";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+function HomeNavControl({ pathname }: { pathname: string }) {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<SessionState>({ kind: "none" });
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    setSession(getSession());
+  }, [pathname, dialogOpen]);
+
+  const active = pathname === "/";
+  const needsConfirm = session.kind === "guest" || session.kind === "registered";
+
+  const onHomePress = () => {
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (needsConfirm) {
+      setDialogOpen(true);
+      return;
+    }
+    navigate({ to: "/" });
+  };
+
+  const exploreStayConnected = () => {
+    setDialogOpen(false);
+    navigate({ to: "/" });
+  };
+
+  const disconnect = () => {
+    logout();
+    setDialogOpen(false);
+    setSession(getSession());
+    navigate({ to: "/welcome" });
+  };
+
+  return (
+    <>
+      <li>
+        <button
+          type="button"
+          onClick={onHomePress}
+          className={cn(
+            "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl tap-feedback w-full",
+            active ? "text-primary" : "text-muted-foreground",
+          )}
+        >
+          <Home className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
+          <span className="text-[10px] font-medium">Home</span>
+        </button>
+      </li>
+
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent className="rounded-2xl max-w-[min(92vw,380px)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Accueil</AlertDialogTitle>
+            <AlertDialogDescription>
+              Retourner à l’exploration sans te déconnecter, ou te déconnecter de cet appareil ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button type="button" className="w-full rounded-xl" onClick={exploreStayConnected}>
+              Voir l’accueil exploration
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              className="w-full rounded-xl"
+              onClick={disconnect}
+            >
+              Me déconnecter
+            </Button>
+            <AlertDialogCancel className="w-full rounded-xl mt-0">Annuler</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
 
 export function AppShell({ children, showNav = true }: { children: ReactNode; showNav?: boolean }) {
   const { pathname } = useLocation();
-  const items = [
-    { to: "/", icon: Home, label: "Home" },
+  const restItems = [
     { to: "/journey", icon: Compass, label: "Journey" },
     { to: "/quiz", icon: QrCode, label: "Quiz" },
     { to: "/dashboard", icon: BarChart3, label: "Results" },
@@ -26,7 +117,8 @@ export function AppShell({ children, showNav = true }: { children: ReactNode; sh
       {showNav && (
         <nav className="shrink-0 border-t border-border bg-card/80 backdrop-blur-md px-2 py-2 pb-4">
           <ul className="flex justify-around">
-            {items.map(({ to, icon: Icon, label }) => {
+            <HomeNavControl pathname={pathname} />
+            {restItems.map(({ to, icon: Icon, label }) => {
               const active = pathname === to;
               return (
                 <li key={to}>

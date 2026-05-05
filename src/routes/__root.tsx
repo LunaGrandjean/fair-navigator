@@ -30,7 +30,10 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "L'Étudiant Fair Experience" },
-      { name: "description", content: "Personalized fair experience for students — scan, explore, get matched." },
+      {
+        name: "description",
+        content: "Personalized fair experience for students — scan, explore, get matched.",
+      },
       { name: "author", content: "L'Étudiant" },
       { property: "og:title", content: "L'Étudiant Fair Experience" },
       { property: "og:description", content: "Personalized fair experience for students." },
