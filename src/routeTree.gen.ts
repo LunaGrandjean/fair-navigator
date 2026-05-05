@@ -9,16 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as ScanRouteImport } from './routes/scan'
 import { Route as SaveRouteImport } from './routes/save'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InstitutionInstitutionIdRouteImport } from './routes/institution.$institutionId'
+import { Route as FormationFormationIdRouteImport } from './routes/formation.$formationId'
+import { Route as ExploreCategoryIdRouteImport } from './routes/explore.$categoryId'
+import { Route as ExploreCategoryIdFormationFormationIdRouteImport } from './routes/explore.$categoryId.formation.$formationId'
+import { Route as ExploreCategoryIdArticleArticleIdRouteImport } from './routes/explore.$categoryId.article.$articleId'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScanRoute = ScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SaveRoute = SaveRouteImport.update({
   id: '/save',
   path: '/save',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuizRoute = QuizRouteImport.update({
@@ -29,6 +53,11 @@ const QuizRoute = QuizRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JourneyRoute = JourneyRouteImport.update({
@@ -46,63 +75,185 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InstitutionInstitutionIdRoute =
+  InstitutionInstitutionIdRouteImport.update({
+    id: '/institution/$institutionId',
+    path: '/institution/$institutionId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FormationFormationIdRoute = FormationFormationIdRouteImport.update({
+  id: '/formation/$formationId',
+  path: '/formation/$formationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreCategoryIdRoute = ExploreCategoryIdRouteImport.update({
+  id: '/explore/$categoryId',
+  path: '/explore/$categoryId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreCategoryIdFormationFormationIdRoute =
+  ExploreCategoryIdFormationFormationIdRouteImport.update({
+    id: '/formation/$formationId',
+    path: '/formation/$formationId',
+    getParentRoute: () => ExploreCategoryIdRoute,
+  } as any)
+const ExploreCategoryIdArticleArticleIdRoute =
+  ExploreCategoryIdArticleArticleIdRouteImport.update({
+    id: '/article/$articleId',
+    path: '/article/$articleId',
+    getParentRoute: () => ExploreCategoryIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/register': typeof RegisterRoute
   '/save': typeof SaveRoute
+  '/scan': typeof ScanRoute
+  '/welcome': typeof WelcomeRoute
+  '/explore/$categoryId': typeof ExploreCategoryIdRouteWithChildren
+  '/formation/$formationId': typeof FormationFormationIdRoute
+  '/institution/$institutionId': typeof InstitutionInstitutionIdRoute
+  '/explore/$categoryId/article/$articleId': typeof ExploreCategoryIdArticleArticleIdRoute
+  '/explore/$categoryId/formation/$formationId': typeof ExploreCategoryIdFormationFormationIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/register': typeof RegisterRoute
   '/save': typeof SaveRoute
+  '/scan': typeof ScanRoute
+  '/welcome': typeof WelcomeRoute
+  '/explore/$categoryId': typeof ExploreCategoryIdRouteWithChildren
+  '/formation/$formationId': typeof FormationFormationIdRoute
+  '/institution/$institutionId': typeof InstitutionInstitutionIdRoute
+  '/explore/$categoryId/article/$articleId': typeof ExploreCategoryIdArticleArticleIdRoute
+  '/explore/$categoryId/formation/$formationId': typeof ExploreCategoryIdFormationFormationIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/journey': typeof JourneyRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/quiz': typeof QuizRoute
+  '/register': typeof RegisterRoute
   '/save': typeof SaveRoute
+  '/scan': typeof ScanRoute
+  '/welcome': typeof WelcomeRoute
+  '/explore/$categoryId': typeof ExploreCategoryIdRouteWithChildren
+  '/formation/$formationId': typeof FormationFormationIdRoute
+  '/institution/$institutionId': typeof InstitutionInstitutionIdRoute
+  '/explore/$categoryId/article/$articleId': typeof ExploreCategoryIdArticleArticleIdRoute
+  '/explore/$categoryId/formation/$formationId': typeof ExploreCategoryIdFormationFormationIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/journey' | '/onboarding' | '/quiz' | '/save'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/journey'
+    | '/login'
+    | '/onboarding'
+    | '/quiz'
+    | '/register'
+    | '/save'
+    | '/scan'
+    | '/welcome'
+    | '/explore/$categoryId'
+    | '/formation/$formationId'
+    | '/institution/$institutionId'
+    | '/explore/$categoryId/article/$articleId'
+    | '/explore/$categoryId/formation/$formationId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/journey' | '/onboarding' | '/quiz' | '/save'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/journey'
+    | '/login'
+    | '/onboarding'
+    | '/quiz'
+    | '/register'
+    | '/save'
+    | '/scan'
+    | '/welcome'
+    | '/explore/$categoryId'
+    | '/formation/$formationId'
+    | '/institution/$institutionId'
+    | '/explore/$categoryId/article/$articleId'
+    | '/explore/$categoryId/formation/$formationId'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/journey'
+    | '/login'
     | '/onboarding'
     | '/quiz'
+    | '/register'
     | '/save'
+    | '/scan'
+    | '/welcome'
+    | '/explore/$categoryId'
+    | '/formation/$formationId'
+    | '/institution/$institutionId'
+    | '/explore/$categoryId/article/$articleId'
+    | '/explore/$categoryId/formation/$formationId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   JourneyRoute: typeof JourneyRoute
+  LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   QuizRoute: typeof QuizRoute
+  RegisterRoute: typeof RegisterRoute
   SaveRoute: typeof SaveRoute
+  ScanRoute: typeof ScanRoute
+  WelcomeRoute: typeof WelcomeRoute
+  ExploreCategoryIdRoute: typeof ExploreCategoryIdRouteWithChildren
+  FormationFormationIdRoute: typeof FormationFormationIdRoute
+  InstitutionInstitutionIdRoute: typeof InstitutionInstitutionIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scan': {
+      id: '/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof ScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/save': {
       id: '/save'
       path: '/save'
       fullPath: '/save'
       preLoaderRoute: typeof SaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quiz': {
@@ -117,6 +268,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journey': {
@@ -140,16 +298,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/institution/$institutionId': {
+      id: '/institution/$institutionId'
+      path: '/institution/$institutionId'
+      fullPath: '/institution/$institutionId'
+      preLoaderRoute: typeof InstitutionInstitutionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formation/$formationId': {
+      id: '/formation/$formationId'
+      path: '/formation/$formationId'
+      fullPath: '/formation/$formationId'
+      preLoaderRoute: typeof FormationFormationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$categoryId': {
+      id: '/explore/$categoryId'
+      path: '/explore/$categoryId'
+      fullPath: '/explore/$categoryId'
+      preLoaderRoute: typeof ExploreCategoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$categoryId/formation/$formationId': {
+      id: '/explore/$categoryId/formation/$formationId'
+      path: '/formation/$formationId'
+      fullPath: '/explore/$categoryId/formation/$formationId'
+      preLoaderRoute: typeof ExploreCategoryIdFormationFormationIdRouteImport
+      parentRoute: typeof ExploreCategoryIdRoute
+    }
+    '/explore/$categoryId/article/$articleId': {
+      id: '/explore/$categoryId/article/$articleId'
+      path: '/article/$articleId'
+      fullPath: '/explore/$categoryId/article/$articleId'
+      preLoaderRoute: typeof ExploreCategoryIdArticleArticleIdRouteImport
+      parentRoute: typeof ExploreCategoryIdRoute
+    }
   }
 }
+
+interface ExploreCategoryIdRouteChildren {
+  ExploreCategoryIdArticleArticleIdRoute: typeof ExploreCategoryIdArticleArticleIdRoute
+  ExploreCategoryIdFormationFormationIdRoute: typeof ExploreCategoryIdFormationFormationIdRoute
+}
+
+const ExploreCategoryIdRouteChildren: ExploreCategoryIdRouteChildren = {
+  ExploreCategoryIdArticleArticleIdRoute:
+    ExploreCategoryIdArticleArticleIdRoute,
+  ExploreCategoryIdFormationFormationIdRoute:
+    ExploreCategoryIdFormationFormationIdRoute,
+}
+
+const ExploreCategoryIdRouteWithChildren =
+  ExploreCategoryIdRoute._addFileChildren(ExploreCategoryIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   JourneyRoute: JourneyRoute,
+  LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   QuizRoute: QuizRoute,
+  RegisterRoute: RegisterRoute,
   SaveRoute: SaveRoute,
+  ScanRoute: ScanRoute,
+  WelcomeRoute: WelcomeRoute,
+  ExploreCategoryIdRoute: ExploreCategoryIdRouteWithChildren,
+  FormationFormationIdRoute: FormationFormationIdRoute,
+  InstitutionInstitutionIdRoute: InstitutionInstitutionIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

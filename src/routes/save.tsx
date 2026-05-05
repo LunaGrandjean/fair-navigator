@@ -84,7 +84,8 @@ function Save() {
             </div>
             <h1 className="text-2xl font-bold">Check your inbox!</h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-[280px]">
-              Your personalized dashboard is on its way to <span className="font-semibold text-foreground">{email}</span>.
+              Your personalized dashboard is on its way to{" "}
+              <span className="font-semibold text-foreground">{email}</span>.
             </p>
             <button
               onClick={() => navigate({ to: "/dashboard" })}
@@ -123,7 +124,10 @@ function Save() {
               </label>
               <label className="block">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  First name <span className="text-muted-foreground/60 font-normal normal-case">(optional)</span>
+                  First name{" "}
+                  <span className="text-muted-foreground/60 font-normal normal-case">
+                    (optional)
+                  </span>
                 </span>
                 <div className="mt-1.5 relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

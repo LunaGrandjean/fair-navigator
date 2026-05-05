@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,21 +12,18 @@ import {
   Brain,
   MapPin,
   PartyPopper,
-  Atom,
   Calculator,
-  Languages,
-  Landmark,
-  Code2,
-  Leaf,
-  Palette,
-  Dumbbell,
+  Coins,
+  Atom,
+  MoreHorizontal,
   Briefcase,
   Cpu,
   Stethoscope,
   Megaphone,
   Wrench,
 } from "lucide-react";
-import { saveProfile, clearProfile } from "@/lib/profile";
+import { setPendingOnboardingProfile } from "@/lib/session";
+import type { Profile } from "@/lib/profile";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -39,19 +36,11 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 const specialties = [
-  { label: "Histoire-Géo, Géopolitique & Sc. Po.", icon: Landmark },
-  { label: "Humanités, Littérature & Philosophie", icon: BookOpen },
-  { label: "Langues, Littératures & Cultures Étrangères", icon: Languages },
-  { label: "Littérature, Langues & Cultures de l'Antiquité", icon: BookOpen },
-  { label: "Mathématiques", icon: Calculator },
-  { label: "Numérique & Sciences Informatiques", icon: Code2 },
-  { label: "Sciences de la Vie et de la Terre", icon: Leaf },
-  { label: "Sciences de l'Ingénieur", icon: Wrench },
-  { label: "Sciences Économiques & Sociales", icon: Briefcase },
-  { label: "Physique-Chimie", icon: Atom },
-  { label: "Arts (Histoire, Théâtre, Plastiques…)", icon: Palette },
-  { label: "Biologie-Écologie", icon: Leaf },
-  { label: "EPS, Pratiques & Culture Sportives", icon: Dumbbell },
+  { label: "Math", icon: Calculator },
+  { label: "Economics", icon: Coins },
+  { label: "Science", icon: Atom },
+  { label: "Literature", icon: BookOpen },
+  { label: "Other", icon: MoreHorizontal },
 ];
 
 const interests = [
@@ -66,7 +55,7 @@ type SingleStep = {
   type: "single";
   key: keyof StepData;
   title: string;
-  icon: any;
+  icon: ComponentType<{ className?: string }>;
   options: { label: string; sub?: string }[];
 };
 type MultiStep = {
@@ -74,8 +63,8 @@ type MultiStep = {
   key: keyof StepData;
   title: string;
   helper: string;
-  icon: any;
-  options: { label: string; icon: any }[];
+  icon: ComponentType<{ className?: string }>;
+  options: { label: string; icon: ComponentType<{ className?: string }> }[];
 };
 type StepData = {
   level: string;
@@ -102,7 +91,7 @@ const steps: (SingleStep | MultiStep)[] = [
     type: "multi",
     key: "specialties",
     title: "What are your specialties?",
-    helper: "Select one or more specialties",
+    helper: "Select one or more",
     icon: BookOpen,
     options: specialties,
   },
@@ -131,8 +120,8 @@ const steps: (SingleStep | MultiStep)[] = [
     title: "How do you prefer to learn?",
     icon: Brain,
     options: [
-      { label: "Practical", sub: "Hands-on projects" },
-      { label: "Theoretical", sub: "Lectures & research" },
+      { label: "Practical", sub: "Hands-on" },
+      { label: "Theoretical" },
       { label: "Mixed" },
     ],
   },
@@ -159,25 +148,32 @@ function Onboarding() {
 
   const current = steps[step];
   const value = data[current.key];
-  const canNext =
-    current.type === "single" ? !!value : Array.isArray(value) && value.length > 0;
+  const canNext = current.type === "single" ? !!value : Array.isArray(value) && value.length > 0;
+
+  const persistAndShowDone = () => {
+    const profile: Profile = {
+      level: data.level,
+      specialties: data.specialties,
+      duration: data.duration,
+      interests: data.interests,
+      learning: data.learning,
+      location: data.location,
+    };
+    setPendingOnboardingProfile(profile);
+    setDone(true);
+  };
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
-    else finish();
+    else persistAndShowDone();
   };
   const skip = () => {
     if (step < total - 1) setStep(step + 1);
-    else finish();
+    else persistAndShowDone();
   };
   const back = () => {
-    if (step === 0) navigate({ to: "/" });
+    if (step === 0) navigate({ to: "/welcome" });
     else setStep(step - 1);
-  };
-  const finish = () => {
-    clearProfile();
-    saveProfile({ account: "user", ...data });
-    setDone(true);
   };
 
   if (done) {
@@ -189,10 +185,11 @@ function Onboarding() {
           </div>
           <h1 className="text-2xl font-bold">Your profile is ready 🎉</h1>
           <p className="mt-3 text-sm text-muted-foreground max-w-[280px]">
-            We'll use it during the fair to recommend the schools and programs that fit you best.
+            Declared preferences will combine with your fair activity for smarter matches on your
+            dashboard.
           </p>
           <button
-            onClick={() => navigate({ to: "/journey" })}
+            onClick={() => navigate({ to: "/register" })}
             className="tap-feedback mt-10 w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-soft"
           >
             Start my fair journey
@@ -210,6 +207,7 @@ function Onboarding() {
         {/* Header */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={back}
             className="tap-feedback w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0"
           >
@@ -245,19 +243,18 @@ function Onboarding() {
         </div>
 
         {/* Options */}
-        <div className="flex-1 overflow-y-auto mt-5 -mx-1 px-1">
+        <div className="flex-1 overflow-y-auto mt-5 -mx-1 px-1 min-h-0">
           {current.type === "single" ? (
             <div className="space-y-2.5">
               {current.options.map((opt) => {
                 const selected = value === opt.label;
                 return (
                   <button
+                    type="button"
                     key={opt.label}
                     onClick={() => setData({ ...data, [current.key]: opt.label })}
                     className={`tap-feedback w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center justify-between ${
-                      selected
-                        ? "border-primary bg-primary-soft"
-                        : "border-border bg-card"
+                      selected ? "border-primary bg-primary-soft" : "border-border bg-card"
                     }`}
                   >
                     <div>
@@ -285,6 +282,7 @@ function Onboarding() {
                 const ItemIcon = opt.icon;
                 return (
                   <button
+                    type="button"
                     key={opt.label}
                     onClick={() => {
                       const newArr = selected
@@ -308,8 +306,9 @@ function Onboarding() {
         </div>
 
         {/* Footer */}
-        <div className="pt-4 space-y-2">
+        <div className="pt-4 space-y-2 shrink-0">
           <button
+            type="button"
             onClick={next}
             disabled={!canNext}
             className="tap-feedback flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-soft disabled:opacity-40 disabled:shadow-none"
@@ -318,6 +317,7 @@ function Onboarding() {
             <ArrowRight className="w-4 h-4" />
           </button>
           <button
+            type="button"
             onClick={skip}
             className="tap-feedback w-full h-10 text-xs text-muted-foreground font-medium"
           >
